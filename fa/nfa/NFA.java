@@ -1,10 +1,27 @@
 package fa.nfa;
 
+import java.util.LinkedHashSet;
+import java.util.Map;
 import java.util.Set;
 
 import fa.State;
 
 public class NFA implements NFAInterface {
+
+    // Represents a linkedlist of states in NFA
+    private LinkedHashSet<NFAState> states;
+
+    // Represents a linkedlist of symbols in NFA
+    private LinkedHashSet<Character> sigma;
+
+    // Represents a linkedlist of the start state in NFA
+    private LinkedHashSet<NFAState> startState;
+
+    // Represents a linkedlist of the final state(s) in NFA
+    private LinkedHashSet<NFAState> finalState;
+
+    // Represents a linkedlist of the final state(s) in NFA
+    private Map<NFAState, Map<Character, NFAState>> transitions;
 
     @Override
     public boolean addState(String name) {
