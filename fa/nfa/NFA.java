@@ -33,7 +33,7 @@ public class NFA implements NFAInterface {
         sigma = new LinkedHashSet<Character>();
         startState = new LinkedHashSet<>();
         finalState = new LinkedHashSet<>();
-        transitions = new HashMap<>();
+        transitions = new HashMap<NFAState, Map<Character, Set<NFAState>>>();
     }
 
     @Override
@@ -158,7 +158,13 @@ public class NFA implements NFAInterface {
             return false;
 
         NFAState source = null;
-        NFAState destination = null;
+
+        // Represents a set of all states our symbol will go too
+        // as one symbol can have multiple transitions from one state
+        LinkedHashSet<NFAState> destinations = null;
+
+        // Used to check if we got all states from given states
+        int numberOfStatesChecked = 0;
 
         // Getting the states we will add transitions too
         for (NFAState state : states) {
@@ -166,13 +172,21 @@ public class NFA implements NFAInterface {
                 source = state;
             }
             if (state.getName().equals(toStates)) {
-                destination = state;
+                // Add transitions too our set of transitions
+                destinations.add(source);
+                numberOfStatesChecked++;
             }
         }
 
-        // If either state is not found, return false
-        if (source == null || destination == null) {
+        // If start state is not found or we don't 
+        // find all states in the set of given states
+        // return false
+        if (source == null || numberOfStatesChecked != toStates.size()) {
             return false;
+        }
+
+        for (NFAState state : destinations) {
+            transitions.putIfAbsent(source, destination);
         }
 
         // Add the transition
