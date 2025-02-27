@@ -1,6 +1,7 @@
 package fa.nfa;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
@@ -21,7 +22,11 @@ public class NFA implements NFAInterface {
     // Represents a linkedlist of the final state(s) in NFA
     private LinkedHashSet<NFAState> finalState;
 
-    // Represents a linkedlist of the transitions in a given state of NFA
+    // Represents each states character's transitions
+    //
+    // In NFA, characters can have multiple transitions per state. 
+    // The key of our map is our current state, the value of our map is 
+    // the characters and the characters transitions.
     private Map<NFAState, Map<Character, Set<NFAState>>> transitions;
 
     /**
@@ -161,41 +166,43 @@ public class NFA implements NFAInterface {
 
         // Represents a set of all states our symbol will go too
         // as one symbol can have multiple transitions from one state
-        LinkedHashSet<NFAState> destinations = null;
-
-        // Used to check if we got all states from given states
-        int numberOfStatesChecked = 0;
+        HashSet<NFAState> destinations = new HashSet<>();
 
         // Getting the states we will add transitions too
         for (NFAState state : states) {
             if (state.getName().equals(fromState)) {
                 source = state;
             }
-            if (state.getName().equals(toStates)) {
+
+            // Checks if state is in our state
+            if (toStates.contains(state.getName())) {
                 // Add transitions too our set of transitions
-                destinations.add(source);
-                numberOfStatesChecked++;
+                destinations.add(state);
             }
         }
 
         // If start state is not found or we don't 
         // find all states in the set of given states
         // return false
-        if (source == null || numberOfStatesChecked != toStates.size()) {
+        if (source == null|| destinations.size() != toStates.size()) {
             return false;
         }
 
-        for (NFAState state : destinations) {
-            transitions.putIfAbsent(source, destination);
-        }
-
-        // Add the transition
+        // If source has no transitions, add to transitions
         transitions.putIfAbsent(source, new HashMap<>());
-        Map<Character, NFAState> stateTransitions = transitions.get(source);
 
-        if (stateTransitions.containsKey(onSymb))return true;
-        
-        stateTransitions.put(onSymb, destination);
+        // Get the transitions for the current state
+        Map<Character, Set<NFAState>> stateTransitions = transitions.get(source);
+
+        // Initialize the set for this symbol if it doesn't exist
+        stateTransitions.putIfAbsent(onSymb, new HashSet<>());
+
+        // Get transitions for the symbol
+        Set<NFAState> symbolTransitions = stateTransitions.get(onSymb);
+
+        // Add all destinations to the symbol transitions
+        symbolTransitions.addAll(destinations);
+
         return true;
     }
 
