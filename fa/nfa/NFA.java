@@ -143,6 +143,7 @@ public class NFA implements NFAInterface {
 
     @Override
     public Set<NFAState> eClosure(NFAState s) {
+        
         // TODO Implement Depth First Search  using stack in loop
         //      Eclosure loop should push children of current node 
         //      Onto stack 
