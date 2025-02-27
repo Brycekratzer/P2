@@ -159,7 +159,7 @@ public class NFA implements NFAInterface {
     public boolean addTransition(String fromState, Set<String> toStates, char onSymb) {
 
         // Checks if symbol is epsilon symbol
-        if (onSymb == 'e' || !sigma.contains(onSymb))
+        if (onSymb != 'e' && !sigma.contains(onSymb))
             return false;
 
         NFAState source = null;
