@@ -5,6 +5,7 @@ import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.Stack;
 
 import fa.State;
 
@@ -143,7 +144,38 @@ public class NFA implements NFAInterface {
 
     @Override
     public Set<NFAState> eClosure(NFAState s) {
+
+        // Get the initial set of transitions
+        Map<Character, Set<NFAState>> startTransitionSymbols = transitions.get(s);
+        HashSet<NFAState> eClosure = new HashSet<>();
+
+        eClosure.add(s);
+
+        // Checks if there're any epsilon transitions in the initial state
+        // if not just return the one state
+        if(!startTransitionSymbols.containsKey('e')) {
+            return eClosure;
+        }
+
+        Stack<NFAState> stack = new Stack<>();
+
+        stack.push(s);
+
+        while(!stack.empty()){
+            // Pop a state from stack
+            NFAState currentState = stack.
+        }
+
+        // Get current set of transitions based on epsilon
+
+        // Take set and check those states for epilson
+
+            // if have states check those states for epsilon transitions
+
+        // Take the new set epsilon states
+
         
+
         // TODO Implement Depth First Search  using stack in loop
         //      Eclosure loop should push children of current node 
         //      Onto stack 
@@ -212,5 +244,4 @@ public class NFA implements NFAInterface {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'isDFA'");
     }
-    
 }
