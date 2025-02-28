@@ -2,6 +2,7 @@ package fa.nfa;
 
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
@@ -144,42 +145,54 @@ public class NFA implements NFAInterface {
 
     @Override
     public Set<NFAState> eClosure(NFAState s) {
-
-        // Get the initial set of transitions
-        Map<Character, Set<NFAState>> startTransitionSymbols = transitions.get(s);
+         
         HashSet<NFAState> eClosure = new HashSet<>();
-
-        eClosure.add(s);
-
-        // Checks if there're any epsilon transitions in the initial state
-        // if not just return the one state
-        if(!startTransitionSymbols.containsKey('e')) {
-            return eClosure;
-        }
-
         Stack<NFAState> stack = new Stack<>();
 
+        eClosure.add(s);
         stack.push(s);
+        
+        // To track if we have went through the loop more than once.
+        // Will be used to check if we traversed the entire NFA
+        boolean wentThroughOnce = false;
 
         while(!stack.empty()){
-            // Pop a state from stack
-            NFAState currentState = stack.
+
+            // Look at most recently viewed state from stack
+            NFAState currentState = stack.peek();
+
+            // Get all transitions for current state, if no transitions continue
+            Map<Character, Set<NFAState>> currentStateTransitions = transitions.get(currentState);
+            if (currentStateTransitions == null) {
+                stack.pop();
+                continue;
+            }
+
+            // Get all epsilon transitions from our current state
+            Set<NFAState> currentEpsilonTransitions = transitions.get(currentState).get('e');
+
+            // No epsilon transitions or we traversed the entire NFA
+            if(currentEpsilonTransitions == null || (currentState.equals(s) && wentThroughOnce == true)) {
+                stack.pop();
+                continue;
+            }
+
+            // For each state reachable through an ε-transition
+            for (NFAState nextState : currentEpsilonTransitions) {
+
+                // If this state hasn't been visited yet
+                if (!eClosure.contains(nextState)) {
+
+                    // Add it to the result set
+                    eClosure.add(nextState);
+
+                    // Push it to the stack to explore its ε-transitions later
+                    stack.push(nextState);
+                }
+            }
+            wentThroughOnce = true;
         }
-
-        // Get current set of transitions based on epsilon
-
-        // Take set and check those states for epilson
-
-            // if have states check those states for epsilon transitions
-
-        // Take the new set epsilon states
-
-        
-
-        // TODO Implement Depth First Search  using stack in loop
-        //      Eclosure loop should push children of current node 
-        //      Onto stack 
-        throw new UnsupportedOperationException("Unimplemented method 'eClosure'");
+        return eClosure;
     }
 
     @Override
