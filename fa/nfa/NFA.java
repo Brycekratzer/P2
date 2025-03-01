@@ -4,7 +4,9 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
+import java.util.LinkedList;
 import java.util.Map;
+import java.util.Queue;
 import java.util.Set;
 import java.util.Stack;
 
@@ -96,8 +98,18 @@ public class NFA implements NFAInterface {
 
     @Override
     public boolean accepts(String s) {
-        // TODO Implement to accept for epsilon transitions
-            return false;
+
+        if(startState.isEmpty()) return false;
+
+        NFAState currentState = startState.iterator().next();
+
+        Queue<NFAState> stateQueue = new LinkedList<>();
+
+        for(char symb : s.toCharArray()){
+            currentState =
+
+        }
+        return false;
     }
 
     @Override
