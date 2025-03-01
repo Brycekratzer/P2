@@ -188,6 +188,9 @@ public class NFA implements NFAInterface {
 
                     // Push it to the stack to explore its ε-transitions later
                     stack.push(nextState);
+                } else {
+                    // If already visited, take out of stack
+                    stack.pop();
                 }
             }
             wentThroughOnce = true;
