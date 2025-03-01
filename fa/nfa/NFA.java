@@ -163,6 +163,8 @@ public class NFA implements NFAInterface {
 
             // Get all transitions for current state, if no transitions continue
             Map<Character, Set<NFAState>> currentStateTransitions = transitions.get(currentState);
+
+            // If no states in general, pop current state out of our stack
             if (currentStateTransitions == null) {
                 stack.pop();
                 continue;
@@ -171,7 +173,7 @@ public class NFA implements NFAInterface {
             // Get all epsilon transitions from our current state
             Set<NFAState> currentEpsilonTransitions = transitions.get(currentState).get('e');
 
-            // No epsilon transitions or we traversed the entire NFA
+            // If no epsilon transitions or we traversed the entire NFA pop current state out off stack
             if(currentEpsilonTransitions == null || (currentState.equals(s) && wentThroughOnce == true)) {
                 stack.pop();
                 continue;
