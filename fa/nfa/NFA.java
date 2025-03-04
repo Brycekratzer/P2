@@ -111,10 +111,14 @@ public class NFA implements NFAInterface {
             // Loop through each state and get all transitions for current symbol
             for(NFAState state : currentStates){
 
-                // If a transition on symbol, add all possible states to hashmap
-                if(transitions.get(state).containsKey(currentSymb)){
-                    nextStates.addAll(transitions.get(state).get(currentSymb));
-                } 
+                // Check if this state has ANY transitions defined
+                if (transitions.containsKey(state)) {
+                    
+                    // Then check if it has transitions for this specific symbol
+                    if (transitions.get(state).containsKey(currentSymb)) {
+                        nextStates.addAll(transitions.get(state).get(currentSymb));
+                    }
+                }
             }
 
             // Represents the eclosures of all next states
