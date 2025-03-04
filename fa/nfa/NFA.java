@@ -101,23 +101,36 @@ public class NFA implements NFAInterface {
 
         if(startState.isEmpty()) return false;
 
-        // Queueu for BFS
-        Queue<NFAState> stateQueue = new LinkedList<>();
-
         // Get all possible start states based on the eclosure of our start state
         Set<NFAState> currentStates = eClosure(startState.iterator().next());
 
         for(char currentSymb : s.toCharArray()){
 
-            Set<NFAState> possibleStates = new HashSet<>();
+            Set<NFAState> nextStates = new HashSet<>();
+
             // Loop through each state and get all transitions for current symbol
             for(NFAState state : currentStates){
-                // If a transition is available
-                if(transitions.get(state).containsKey(currentSymb)){
 
-                    // Adds all possible transition states
-                    possibleStates.addAll(transitions.get(state).get(currentSymb));
-                }
+                // If a transition on symbol, add all possible states to hashmap
+                if(transitions.get(state).containsKey(currentSymb)){
+                    nextStates.addAll(transitions.get(state).get(currentSymb));
+                } 
+            }
+
+            // Represents the eclosures of all next states
+            Set<NFAState> allNextStates = new HashSet<>();
+
+            // Loop through all possible next states obtained and 
+            // add them to the eclosure set
+            for(NFAState state : nextStates){
+                allNextStates.addAll(eClosure(state));
+            }
+
+            currentStates = allNextStates;
+        }
+        for(NFAState finalState : finalState){
+            if(currentStates.contains(finalState)){
+                return true;
             }
         }
         return false;
