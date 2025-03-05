@@ -28,14 +28,14 @@ public class NFA implements NFAInterface {
 
     // Represents each states character's transitions
     //
-    // In NFA, characters can have multiple transitions per state. 
-    // The key of our map is our current state, the value of our map is 
+    // In NFA, characters can have multiple transitions per state.
+    // The key of our map is our current state, the value of our map is
     // the characters and the characters transitions.
     private Map<NFAState, Map<Character, Set<NFAState>>> transitions;
 
     /**
      * @constructor
-     * constructor for NFA object
+     *              constructor for NFA object
      */
     public NFA() {
         states = new LinkedHashSet<NFAState>();
@@ -99,21 +99,22 @@ public class NFA implements NFAInterface {
     @Override
     public boolean accepts(String s) {
 
-        if(startState.isEmpty()) return false;
+        if (startState.isEmpty())
+            return false;
 
         // Get all possible start states based on the eclosure of our start state
         Set<NFAState> currentStates = eClosure(startState.iterator().next());
 
-        for(char currentSymb : s.toCharArray()){
+        for (char currentSymb : s.toCharArray()) {
 
             Set<NFAState> nextStates = new HashSet<>();
 
             // Loop through each state and get all transitions for current symbol
-            for(NFAState state : currentStates){
+            for (NFAState state : currentStates) {
 
                 // Check if this state has ANY transitions defined
                 if (transitions.containsKey(state)) {
-                    
+
                     // Then check if it has transitions for this specific symbol
                     if (transitions.get(state).containsKey(currentSymb)) {
                         nextStates.addAll(transitions.get(state).get(currentSymb));
@@ -124,16 +125,16 @@ public class NFA implements NFAInterface {
             // Represents the eclosures of all next states
             Set<NFAState> allNextStates = new HashSet<>();
 
-            // Loop through all possible next states obtained and 
+            // Loop through all possible next states obtained and
             // add them to the eclosure set
-            for(NFAState state : nextStates){
+            for (NFAState state : nextStates) {
                 allNextStates.addAll(eClosure(state));
             }
 
             currentStates = allNextStates;
         }
-        for(NFAState finalState : finalState){
-            if(currentStates.contains(finalState)){
+        for (NFAState finalState : finalState) {
+            if (currentStates.contains(finalState)) {
                 return true;
             }
         }
@@ -185,18 +186,18 @@ public class NFA implements NFAInterface {
 
     @Override
     public Set<NFAState> eClosure(NFAState s) {
-         
+
         HashSet<NFAState> eClosure = new HashSet<>();
         Stack<NFAState> stack = new Stack<>();
 
         eClosure.add(s);
         stack.push(s);
-        
+
         // To track if we have went through the loop more than once.
         // Will be used to check if we traversed the entire NFA
         boolean wentThroughOnce = false;
 
-        while(!stack.empty()){
+        while (!stack.empty()) {
 
             // Look at most recently viewed state from stack
             NFAState currentState = stack.peek();
@@ -213,8 +214,9 @@ public class NFA implements NFAInterface {
             // Get all epsilon transitions from our current state
             Set<NFAState> currentEpsilonTransitions = transitions.get(currentState).get('e');
 
-            // If no epsilon transitions or we traversed the entire NFA pop current state out off stack
-            if(currentEpsilonTransitions == null || (currentState.equals(s) && wentThroughOnce == true)) {
+            // If no epsilon transitions or we traversed the entire NFA pop current state
+            // out off stack
+            if (currentEpsilonTransitions == null || (currentState.equals(s) && wentThroughOnce == true)) {
                 stack.pop();
                 continue;
             }
@@ -272,10 +274,10 @@ public class NFA implements NFAInterface {
             }
         }
 
-        // If start state is not found or we don't 
+        // If start state is not found or we don't
         // find all states in the set of given states
         // return false
-        if (source == null|| destinations.size() != toStates.size()) {
+        if (source == null || destinations.size() != toStates.size()) {
             return false;
         }
 
@@ -299,7 +301,17 @@ public class NFA implements NFAInterface {
 
     @Override
     public boolean isDFA() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'isDFA'");
+        for (Map.Entry<NFAState, Map<Character, Set<NFAState>>> entry : transitions.entrySet()) {
+            Map<Character, Set<NFAState>> stateTransitions = entry.getValue();
+
+            for (Map.Entry<Character, Set<NFAState>> transition : stateTransitions.entrySet()) {
+                if (transition.getValue().size() > 1) {
+                    return false;
+                }
+            }
+
+        }
+
+        return true;
     }
 }
