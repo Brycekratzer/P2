@@ -300,18 +300,34 @@ public class NFA implements NFAInterface {
     }
 
     @Override
-    public boolean isDFA() {
-        for (Map.Entry<NFAState, Map<Character, Set<NFAState>>> entry : transitions.entrySet()) {
-            Map<Character, Set<NFAState>> stateTransitions = entry.getValue();
+public boolean isDFA() {
+    for (Map.Entry<NFAState, Map<Character, Set<NFAState>>> entry : transitions.entrySet()) {
+        NFAState state = entry.getKey();
+        Map<Character, Set<NFAState>> stateTransitions = entry.getValue();
 
-            for (Map.Entry<Character, Set<NFAState>> transition : stateTransitions.entrySet()) {
-                if (transition.getValue().size() > 1) {
-                    return false;
-                }
-            }
-
+        // Check for epsilon transitions (DFA cannot have these)
+        if (stateTransitions.containsKey('e')) {
+            return false;
         }
 
-        return true;
+        // Check if any symbol has multiple transitions
+        for (Map.Entry<Character, Set<NFAState>> transition : stateTransitions.entrySet()) {
+            char symbol = transition.getKey();
+            Set<NFAState> destinations = transition.getValue();
+
+            if (destinations.size() > 1) {
+                return false;
+            }
+        }
+
+        // Ensure every state has a transition for each symbol in sigma
+        for (char symbol : sigma) {
+            if (!stateTransitions.containsKey(symbol)) {
+                return false;
+            }
+        }
     }
+
+    return true;
+}
 }
