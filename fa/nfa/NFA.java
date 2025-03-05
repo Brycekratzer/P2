@@ -180,10 +180,22 @@ public class NFA implements NFAInterface {
 
     @Override
     public Set<NFAState> getToState(NFAState from, char onSymb) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getToState'");
-    }
+        
+        if (!transitions.containsKey(from)) {
+            return new HashSet<>();
+        }
 
+      
+        Map<Character, Set<NFAState>> stateTransitions = transitions.get(from);
+
+       
+        if (!stateTransitions.containsKey(onSymb)) {
+            return new HashSet<>();
+        }
+
+      
+        return new HashSet<>(stateTransitions.get(onSymb));
+    }
     @Override
     public Set<NFAState> eClosure(NFAState s) {
 
@@ -244,8 +256,32 @@ public class NFA implements NFAInterface {
 
     @Override
     public int maxCopies(String s) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'maxCopies'");
+        if (startState.isEmpty()) return 0;
+
+        Set<NFAState> currentStates = eClosure(startState.iterator().next()); 
+        int maxCopies = currentStates.size(); 
+
+        for (char symbol : s.toCharArray()) {
+            Set<NFAState> nextStates = new HashSet<>();
+
+           
+            for (NFAState state : currentStates) {
+                nextStates.addAll(getToState(state, symbol));
+            }
+
+           
+            Set<NFAState> allNextStates = new HashSet<>();
+            for (NFAState state : nextStates) {
+                allNextStates.addAll(eClosure(state));
+            }
+
+            currentStates = allNextStates; 
+
+           
+            maxCopies = Math.max(maxCopies, currentStates.size());
+        }
+
+        return maxCopies;
     }
 
     @Override
