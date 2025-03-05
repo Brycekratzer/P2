@@ -12,6 +12,14 @@ import java.util.Stack;
 
 import fa.State;
 
+
+
+/**
+ * @author Bryce Kratzer
+ * @author Tristan Jones
+ * @version CS 361 Spring 2025
+ * @description This class has methods for creating an NFA such as adding characters, transitions, and initial and final states.
+ */
 public class NFA implements NFAInterface {
 
     // Represents a linkedlist of states in NFA
