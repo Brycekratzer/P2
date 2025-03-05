@@ -4,6 +4,13 @@ import java.util.Objects;
 
 import fa.State;
 
+
+/**
+ * @author Bryce Kratzer
+ * @version CS 361 Spring 2025
+ * @description This class has methods for creating a NFA State object. It has a custom 
+ * equals method for comparing two NFA states.
+ */
 public class NFAState extends State{
     private String name;
 
